@@ -2,16 +2,11 @@
     border: 3px solid black;
     position: relative;
     height: 80vh;
+    background: rgb(222,245,243);
+    background: linear-gradient(90deg, rgba(222,245,243,1) 0%, rgba(220,239,246,1) 30%, rgba(238,231,246,1) 70%, rgba(246,230,241,1) 100%); 
 }
 
-.node {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #1e67c7;
-  }
-
-.link {
+.svgEle {
     position:absolute;
     top: 0;
     left: 0;

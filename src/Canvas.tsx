@@ -3,13 +3,14 @@ import * as d3 from "d3"
 import Node from "./Node"
 import "./Canvas.css"
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { xml } from "d3"
 
 export const Canvas = () => {
     const [width, setWidth] = useState(0);
     const nodeX1 = useMotionValue(0);
-    const nodeX2 = useMotionValue(0);
+    const nodeX2 = useMotionValue(width / 4);
+    const nodeX3 = useMotionValue(3 * width / 4);
     const [linkSvg1, setLinkSvg1] = useState<string | null>(null);
+    const [linkSvg2, setLinkSvg2] = useState<string | null>(null);
 
     const handleChangePosX1 = (e: React.ChangeEvent<HTMLInputElement>) => {
         nodeX1.set(parseInt(e.target.value, 10) ?? 0)
@@ -20,17 +21,27 @@ export const Canvas = () => {
 
     }
 
+    const handleChangePosX3 = (e: React.ChangeEvent<HTMLInputElement>) => {
+        nodeX3.set(parseInt(e.target.value, 10) ?? 0)
+
+    }
+
     useEffect(() => {
         setLinkSvg1(line([[nodeX1.get(), 50], [nodeX2.get(), 180]]))
         const unsubscribeNode1X = nodeX1.on("change", (newX1) => {
             setLinkSvg1(line([[newX1, 50], [nodeX2.get(), 180]]))
+            setLinkSvg2(line([[newX1, 50], [nodeX3.get(), 180]]))
         })
         const unsubscribeNode2X = nodeX2.on("change", (newX2) => {
             setLinkSvg1(line([[nodeX1.get(), 50], [newX2, 180]]))
         })
+        const unsubscribeNode3X = nodeX3.on("change", (newX3) => {
+            setLinkSvg2(line([[nodeX1.get(), 50], [newX3, 180]]))
+        })
         return () => {
             unsubscribeNode1X()
             unsubscribeNode2X()
+            unsubscribeNode3X()
         }
     }, [])
 
@@ -73,9 +84,10 @@ export const Canvas = () => {
             <h2>Canvas width: {width}</h2>
             <input type="range" min={0} max={width} onChange={handleChangePosX1} />
             <input type="range" min={0} max={width} onChange={handleChangePosX2} />
+            <input type="range" min={0} max={width} onChange={handleChangePosX3} />
 
             <div className="canvas" ref={canvasRef}>
-                <motion.svg className="link">
+                <motion.svg className="svgEle">
                     <motion.path
                         d={circle1Svg} stroke="#832ed9" strokeWidth="3" fill="#3acdde"
                         initial={{ opacity: 0, scale: 0.5 }}
@@ -83,47 +95,9 @@ export const Canvas = () => {
                         transition={{ duration: 0.25 }}
                     />
                 </motion.svg>
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1, x: nodeX2.get(), y: 180 }}
-                    transition={{ duration: 0.25 }}
-                    style={{ position: "relative", width: "min-content" }}
-                >
-                    <motion.svg className="link">
-                        <motion.path
-                            d={circle2Svg} stroke="#832ed9" strokeWidth="3" fill="#3acdde"
-                        ></motion.path>
-                    </motion.svg>
-                    <motion.button
-                        // d={circle3Svg} stroke="none" fill="#24d191"
-                        style={{
-                            position: "relative",
-                            // transform: "translate(-45px, 15px)",
-                            top: "21px",
-                            left: "-51px",
-                            // x: "-45",
-                            // y: "-15",
-                            width: '30px',
-                            height: '30px',
-                            padding: "0",
-                            backgroundColor: "rgba(159, 166, 163, 0.4)",
-                            borderRadius: "50%",
-                            color: "white",
-                            fontSize: "1.6rem",
-                            fontWeight: "800",
-                            textAlign: "center",
-                            verticalAlign: "middle",
-                            lineHeight: "30px",
-                        }}
-                        // animate={{scale: 1.2}}
-                        whileHover={{
-                            scale: 1.4,
-                            backgroundColor: "rgba(33, 217, 149, 1)",
-                            border: "none"
-                        }}
-                    >+</motion.button>
-                </motion.div>
-                <motion.svg className="link">
+                <Node x={nodeX2.get()} y={180} />
+                <Node x={nodeX3.get()} y={180} />
+                <motion.svg className="svgEle">
                     <motion.path d={linkSvg1 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
                         strokeLinecap="round"
                         animate={{
@@ -131,7 +105,15 @@ export const Canvas = () => {
                         }}
                         transition={{ duration: 0.25 }}
                     />
-
+                </motion.svg>
+                <motion.svg className="svgEle">
+                    <motion.path d={linkSvg2 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
+                        strokeLinecap="round"
+                        animate={{
+                            d: linkSvg2 ?? undefined
+                        }}
+                        transition={{ duration: 0.25 }}
+                    />
                 </motion.svg>
                 {/* <motion.div
             drag
