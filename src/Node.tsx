@@ -82,6 +82,7 @@ const CreateNodeBtn = (props: { side: string }) => {
             whileHover={{
                 scale: 1.4,
                 backgroundColor: "rgba(33, 217, 149, 1)",
+                border: "none",
             }}
             whileTap={{
                 scale: 1.2,
