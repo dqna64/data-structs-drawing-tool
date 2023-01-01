@@ -70,24 +70,25 @@ const nodeCircVar = {
 }
 
 const linkLineVar = {
-    init:{ pathLength: 0, opacity: 0 },
-                    show: (linkLineSvg: string) => ({
-                        d: linkLineSvg ?? undefined,
-                        pathLength: 1,
-                        opacity: 1,
-                        transition:{ duration: DURATION, delay: 0.05 }
-                    }),
+    init: { pathLength: 0, opacity: 0 },
+    show: (linkLineSvg: string) => ({
+        d: linkLineSvg ?? undefined,
+        pathLength: 1,
+        opacity: 1,
+        transition: { duration: DURATION, delay: 0.05 }
+    }),
 }
 
 const linkArrowVar = {
-    init:{ opacity: 0, 
+    init: {
+        opacity: 0,
     },
-                    show: (linkArrowSvg: string) => ({
-                        
-                        d: linkArrowSvg ?? undefined,
-                        opacity: 1,
-                        transition:{ duration: DURATION, delay: 0.08 }
-                    }),
+    show: (linkArrowSvg: string) => ({
+
+        d: linkArrowSvg ?? undefined,
+        opacity: 1,
+        transition: { duration: DURATION, delay: 0.08 }
+    }),
 }
 
 const Node = (props: PropTypes) => {
@@ -172,37 +173,6 @@ const Node = (props: PropTypes) => {
                     animate="show"
                 ></motion.path>
             </motion.svg> */}
-            {materialised && <motion.svg className="svgEle">
-                <motion.path d={linkLineSvg ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
-                    strokeLinecap="round"
-                    variants={linkLineVar}
-                    custom={linkLineSvg}
-                    initial="init"
-                    animate="show"
-                    // initial={{ pathLength: 0, opacity: 0 }}
-                    // animate={{
-                        //     d: linkLineSvg ?? undefined,
-                        //     pathLength: 1,
-                        //     opacity: 1,
-                        // }}
-                        // transition={{ duration: DURATION, delay: 0.05 }}
-                        />
-            </motion.svg>}
-            {materialised && 
-            <motion.svg className="svgEle">
-                <motion.path d={linkArrowSvg ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
-                    strokeLinecap="round"
-                    variants={linkArrowVar}
-                    custom={linkArrowSvg}
-                    initial="init"
-                    animate="show"
-                    style={{
-                        x:props.side ==='left'?22.4:-22.4,
-                        y:-21,
-                        rotate: props.side ==='left'?-135:135
-                    }}
-                    />
-            </motion.svg>}
 
             <motion.button
                 style={{
@@ -232,7 +202,12 @@ const Node = (props: PropTypes) => {
                     scale: 1.2,
                 }}
                 onClick={materialise}
-            >{materialised ||
+            >{materialised ?
+                <motion.div
+                    initial={{scale: 0}}
+                    animate={{scale: 0.84}}
+                    transition={{duration: DURATION}}
+                >{Math.floor(9 * Math.random()) + 1}</motion.div> :
                 <img src={plusIcon} width="18px"></img>
                 }
             </motion.button>
@@ -243,6 +218,37 @@ const Node = (props: PropTypes) => {
             {materialised &&
                 <Node x={0} y={0} side="right" />
             }
+            {materialised && <motion.svg className="svgEle">
+                <motion.path d={linkLineSvg ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
+                    strokeLinecap="round"
+                    variants={linkLineVar}
+                    custom={linkLineSvg}
+                    initial="init"
+                    animate="show"
+                // initial={{ pathLength: 0, opacity: 0 }}
+                // animate={{
+                //     d: linkLineSvg ?? undefined,
+                //     pathLength: 1,
+                //     opacity: 1,
+                // }}
+                // transition={{ duration: DURATION, delay: 0.05 }}
+                />
+            </motion.svg>}
+            {materialised &&
+                <motion.svg className="svgEle">
+                    <motion.path d={linkArrowSvg ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
+                        strokeLinecap="round"
+                        variants={linkArrowVar}
+                        custom={linkArrowSvg}
+                        initial="init"
+                        animate="show"
+                        style={{
+                            x: props.side === 'left' ? 22.4 : -22.4,
+                            y: -21,
+                            rotate: props.side === 'left' ? -135 : 135
+                        }}
+                    />
+                </motion.svg>}
         </motion.div>
 
     </>)

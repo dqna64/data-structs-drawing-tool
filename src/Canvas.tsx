@@ -1,4 +1,4 @@
-import { motion, useMotionValue } from "framer-motion"
+import { filterProps, motion, useMotionValue } from "framer-motion"
 import * as d3 from "d3"
 import Node from "./Node"
 import "./Canvas.css"
@@ -6,7 +6,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import Node2 from "./Node2"
 
 const RAD = 30
-const START_Y = 90
+const START_Y = 110
 
 export const Canvas = () => {
     const [width, setWidth] = useState(0);
@@ -108,14 +108,60 @@ export const Canvas = () => {
             <div className="canvas" ref={canvasRef}>
                 {widthInitialised && (
                     <>
-                        <motion.svg className="svgEle">
+                        {/* <motion.svg className="svgEle">
                             <motion.path
                                 d={circle1Svg} stroke="#832ed9" strokeWidth="3" fill="rgba(49, 179, 235, 0.6)"
                                 initial={{ opacity: 0, scale: 0.5, x: nodeX1.get(), y: START_Y }}
                                 animate={{ opacity: 1, scale: 1, x: nodeX1.get(), y: START_Y }}
                                 transition={{ duration: 0.5 }}
                             />
-                        </motion.svg>
+                        </motion.svg> */}
+                        <motion.button
+                            style={{
+                                position: "absolute",
+                                // top: materialised ? '-30px'  : btnOffset.top,
+                                // left: materialised ? '-30px'  : btnOffset.left,
+                                width: '28px',
+                                height: '28px',
+                                padding: "0",
+                                backgroundColor: "rgba(49, 179, 235, 0.6)",
+                                borderRadius: "50%",
+                                border: 'none',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+
+                            }}
+                            initial={{
+                                opacity: 0,
+                                scale: 0.3,
+                                x: nodeX1.get() - 15,
+                                y: START_Y - 15,
+                            }}
+                            animate={{
+                                x: nodeX1.get() - 15,
+                                y: START_Y - 15,
+                                scale: 2,
+                                opacity: 1,
+                                pathLength: 1,
+                            }}
+                            transition={{ duration: 0.5 }}
+                            whileHover={{
+                                scale: 1.4,
+                                backgroundColor: "rgba(33, 217, 149, 1)",
+                                cursor: "pointer",
+                            }}
+                            whileTap={{
+                                scale: 1.2,
+                            }}
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 0.84 }}
+                                transition={{ duration: 0.5 }}
+                            >{Math.floor(9 * Math.random()) + 1}</motion.div>
+                        </motion.button>
+
                         <Node2 x={nodeX1.get()} y={START_Y} side='left' />
                         <Node2 x={nodeX1.get()} y={START_Y} side='right' />
                         {/* <Node x={nodeX3.get()} y={180} /> */}
