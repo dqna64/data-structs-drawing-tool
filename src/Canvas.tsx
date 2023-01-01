@@ -3,7 +3,6 @@ import * as d3 from "d3"
 import Node from "./Node"
 import "./Canvas.css"
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
-import Node2 from "./Node2"
 
 const RAD = 30
 const START_Y = 110
@@ -162,9 +161,8 @@ export const Canvas = () => {
                             >{Math.floor(9 * Math.random()) + 1}</motion.div>
                         </motion.button>
 
-                        <Node2 x={nodeX1.get()} y={START_Y} side='left' />
-                        <Node2 x={nodeX1.get()} y={START_Y} side='right' />
-                        {/* <Node x={nodeX3.get()} y={180} /> */}
+                        <Node x={nodeX1.get()} y={START_Y} side='left' />
+                        <Node x={nodeX1.get()} y={START_Y} side='right' />
                         {/* <motion.svg className="svgEle">
                             <motion.path d={linkSvg1 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
                                 strokeLinecap="round"
