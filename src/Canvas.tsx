@@ -3,6 +3,9 @@ import * as d3 from "d3"
 import Node from "./Node"
 import "./Canvas.css"
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
+import Node2 from "./Node2"
+
+const RAD = 30
 
 export const Canvas = () => {
     const [width, setWidth] = useState(0);
@@ -30,13 +33,22 @@ export const Canvas = () => {
         nodeX1.set(width / 2)
         nodeX2.set(width / 4)
         nodeX3.set(3 * width / 4)
+
+        const intersectPoints_1_1 = calcIntersectPoints(nodeX1.get(), 50, nodeX2.get(), 180, RAD, RAD)
+        setLinkSvg1(line([[nodeX1.get() + intersectPoints_1_1.start.x, 50 + intersectPoints_1_1.start.y], [nodeX1.get() + intersectPoints_1_1.end.x, 50 + intersectPoints_1_1.end.y]]))
+
+        const intersectPnts_1_2 = calcIntersectPoints(nodeX1.get(), 50, nodeX3.get(), 180, RAD, RAD)
+        setLinkSvg2(line([[nodeX1.get() + intersectPnts_1_2.start.x, 50 + intersectPnts_1_2.start.y], [nodeX1.get() + intersectPnts_1_2.end.x, 50 + intersectPnts_1_2.end.y]]))
     }, [width])
 
     useEffect(() => {
-        setLinkSvg1(line([[nodeX1.get(), 50], [nodeX2.get(), 180]]))
+
         const unsubscribeNode1X = nodeX1.on("change", (newX1) => {
-            setLinkSvg1(line([[newX1, 50], [nodeX2.get(), 180]]))
-            setLinkSvg2(line([[newX1, 50], [nodeX3.get(), 180]]))
+            const intersectPoints_1_1 = calcIntersectPoints(newX1, 50, nodeX2.get(), 180, RAD, RAD)
+            setLinkSvg1(line([[newX1 + intersectPoints_1_1.start.x, 50 + intersectPoints_1_1.start.y], [newX1 + intersectPoints_1_1.end.x, 50 + intersectPoints_1_1.end.y]]))
+
+            const intersectPnts_1_2 = calcIntersectPoints(newX1, 50, nodeX3.get(), 180, RAD, RAD)
+            setLinkSvg2(line([[newX1 + intersectPnts_1_2.start.x, 50 + intersectPnts_1_2.start.y], [newX1 + intersectPnts_1_2.end.x, 50 + intersectPnts_1_2.end.y]]))
         })
         const unsubscribeNode2X = nodeX2.on("change", (newX2) => {
             setLinkSvg1(line([[nodeX1.get(), 50], [newX2, 180]]))
@@ -103,28 +115,31 @@ export const Canvas = () => {
                                 transition={{ duration: 0.5 }}
                             />
                         </motion.svg>
-                        <Node x={nodeX2.get()} y={180} />
+                        <Node2 x={nodeX1.get()} y={50} side='left' />
                         <Node x={nodeX3.get()} y={180} />
-                        <motion.svg className="svgEle">
+                        {/* <motion.svg className="svgEle">
                             <motion.path d={linkSvg1 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
                                 strokeLinecap="round"
-                                initial={{pathLength: 0}}
+                                initial={{ pathLength: 0 }}
                                 animate={{
                                     d: linkSvg1 ?? undefined,
                                     pathLength: 1
                                 }}
-                                transition={{ delay: 0.5, duration: 0.25 }}
-                            />
-                        </motion.svg>
+                                transition={{ duration: 0.5 }}
+                                />
+                        </motion.svg> */}
                         <motion.svg className="svgEle">
                             <motion.path d={linkSvg2 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
                                 strokeLinecap="round"
+                                initial={{ pathLength: 0 }}
                                 animate={{
-                                    d: linkSvg2 ?? undefined
+                                    d: linkSvg2 ?? undefined,
+                                    pathLength: 1
                                 }}
-                                transition={{ duration: 0.25 }}
+                                transition={{ duration: 0.5 }}
                             />
                         </motion.svg>
+
                     </>)}
                 {/* <motion.div
             drag
@@ -138,4 +153,23 @@ export const Canvas = () => {
             </div>
         </div>
     )
+}
+
+/**
+ * Given two nodes and their radii, find the points intersecting their
+ * circumferences by the shortest line connecting them.
+ * @param x1 x coord of start node
+ * @param y1 y coord of start node
+ * @param x2 x coord of end node
+ * @param y2 y coord of end node
+ * @param rad1 radius of start node
+ * @param rad2 radius of end node
+ */
+const calcIntersectPoints = (x1: number, y1: number, x2: number, y2: number, rad1: number, rad2: number): { start: { x: number, y: number }, end: { x: number, y: number } } => {
+    const dx = (x2 - x1)
+    const dy = (y2 - y1)
+    const dist = Math.sqrt(dx ** 2 + dy ** 2)
+    const start = { x: (rad1 / dist) * dx, y: (rad1 / dist) * dy }
+    const end = { x: (1 - (rad2 / dist)) * dx, y: (1 - (rad2 / dist)) * dy }
+    return { start, end }
 }

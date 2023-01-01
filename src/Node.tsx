@@ -2,6 +2,7 @@ import * as d3 from "d3"
 import { motion } from "framer-motion"
 import "./Node.css"
 import plusIcon from "./assets/plus.svg"
+import { useState } from "react"
 
 
 type PropTypes = {
@@ -9,7 +10,18 @@ type PropTypes = {
     y: number
 }
 
+const nodeCircVar = {
+    init: { pathLength: 0 },
+    show: {
+        pathLength: 1,
+        transition: { duration: 1.2 }
+    },
+}
+
 const Node = (props: PropTypes) => {
+    // Whether the create-node button has turned into an actual node
+    const [materialised, setMaterialised] = useState(false)
+
     const circle = d3
         .arc();
 
@@ -30,10 +42,15 @@ const Node = (props: PropTypes) => {
             <motion.svg className="svgEle">
                 <motion.path
                     d={circle2Svg} stroke="#832ed9" strokeWidth="3" fill="#3acdde"
+                    variants={nodeCircVar}
+                    initial="init"
+                    animate="show"
                 ></motion.path>
             </motion.svg>
             <CreateNodeBtn side='left' />
             <CreateNodeBtn side='right' />
+            <div className="leftSlot"></div>
+            <div className="rightSlot"></div>
         </motion.div>)
 }
 
@@ -54,25 +71,16 @@ const CreateNodeBtn = (props: { side: string }) => {
     const btnOffset = btnOffsets[props.side]
     return (
         <motion.button
-            // d={circle3Svg} stroke="none" fill="#24d191"
             style={{
                 position: "absolute",
-                // transform: "translate(-45px, 15px)",
                 top: btnOffset.top,
                 left: btnOffset.left,
-                // x: "-45",
-                // y: "-15",
                 width: '30px',
                 height: '30px',
                 padding: "0",
                 backgroundColor: "rgba(163, 163, 163, 0.6)",
                 borderRadius: "50%",
-                // color: "white",
-                // fontSize: "1.6rem",
-                // fontWeight: "800",
-                // textAlign: "center",
-                // verticalAlign: "middle",
-                // lineHeight: "30px",
+                border: 'none',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -82,7 +90,7 @@ const CreateNodeBtn = (props: { side: string }) => {
             whileHover={{
                 scale: 1.4,
                 backgroundColor: "rgba(33, 217, 149, 1)",
-                border: "none",
+                cursor: "pointer",
             }}
             whileTap={{
                 scale: 1.2,
@@ -90,5 +98,6 @@ const CreateNodeBtn = (props: { side: string }) => {
         >
             <img src={plusIcon} width="18px"></img>
         </motion.button>
+
     )
 }
