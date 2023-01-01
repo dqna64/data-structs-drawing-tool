@@ -1,7 +1,7 @@
 import * as d3 from "d3"
 import { motion } from "framer-motion"
 import "./Node.css"
-import plusIcon from "../public/plus.svg"
+import plusIcon from "./assets/plus.svg"
 
 
 type PropTypes = {
@@ -22,9 +22,9 @@ const Node = (props: PropTypes) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
+            initial={{ opacity: 0, scale: 0.5, x: props.x, y: props.y }}
             animate={{ opacity: 1, scale: 1, x: props.x, y: props.y }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.5 }}
             style={{ position: "absolute", width: "min-content" }}
         >
             <motion.svg className="svgEle">

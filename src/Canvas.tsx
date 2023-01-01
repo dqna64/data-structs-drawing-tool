@@ -6,7 +6,8 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 
 export const Canvas = () => {
     const [width, setWidth] = useState(0);
-    const nodeX1 = useMotionValue(0);
+    const [widthInitialised, setWidthInitialised] = useState(false)
+    const nodeX1 = useMotionValue(width / 2);
     const nodeX2 = useMotionValue(width / 4);
     const nodeX3 = useMotionValue(3 * width / 4);
     const [linkSvg1, setLinkSvg1] = useState<string | null>(null);
@@ -18,13 +19,18 @@ export const Canvas = () => {
 
     const handleChangePosX2 = (e: React.ChangeEvent<HTMLInputElement>) => {
         nodeX2.set(parseInt(e.target.value, 10) ?? 0)
-
     }
 
     const handleChangePosX3 = (e: React.ChangeEvent<HTMLInputElement>) => {
         nodeX3.set(parseInt(e.target.value, 10) ?? 0)
-
     }
+
+    useEffect(() => {
+        setWidthInitialised(true)
+        nodeX1.set(width / 2)
+        nodeX2.set(width / 4)
+        nodeX3.set(3 * width / 4)
+    }, [width])
 
     useEffect(() => {
         setLinkSvg1(line([[nodeX1.get(), 50], [nodeX2.get(), 180]]))
@@ -87,34 +93,39 @@ export const Canvas = () => {
             <input type="range" min={0} max={width} onChange={handleChangePosX3} />
 
             <div className="canvas" ref={canvasRef}>
-                <motion.svg className="svgEle">
-                    <motion.path
-                        d={circle1Svg} stroke="#832ed9" strokeWidth="3" fill="#3acdde"
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1, x: nodeX1.get(), y: 50 }}
-                        transition={{ duration: 0.25 }}
-                    />
-                </motion.svg>
-                <Node x={nodeX2.get()} y={180} />
-                <Node x={nodeX3.get()} y={180} />
-                <motion.svg className="svgEle">
-                    <motion.path d={linkSvg1 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
-                        strokeLinecap="round"
-                        animate={{
-                            d: linkSvg1 ?? undefined
-                        }}
-                        transition={{ duration: 0.25 }}
-                    />
-                </motion.svg>
-                <motion.svg className="svgEle">
-                    <motion.path d={linkSvg2 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
-                        strokeLinecap="round"
-                        animate={{
-                            d: linkSvg2 ?? undefined
-                        }}
-                        transition={{ duration: 0.25 }}
-                    />
-                </motion.svg>
+                {widthInitialised && (
+                    <>
+                        <motion.svg className="svgEle">
+                            <motion.path
+                                d={circle1Svg} stroke="#832ed9" strokeWidth="3" fill="#3acdde"
+                                initial={{ opacity: 0, scale: 0.5, x: nodeX1.get(), y: 50 }}
+                                animate={{ opacity: 1, scale: 1, x: nodeX1.get(), y: 50 }}
+                                transition={{ duration: 0.5 }}
+                            />
+                        </motion.svg>
+                        <Node x={nodeX2.get()} y={180} />
+                        <Node x={nodeX3.get()} y={180} />
+                        <motion.svg className="svgEle">
+                            <motion.path d={linkSvg1 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
+                                strokeLinecap="round"
+                                initial={{pathLength: 0}}
+                                animate={{
+                                    d: linkSvg1 ?? undefined,
+                                    pathLength: 1
+                                }}
+                                transition={{ delay: 0.5, duration: 0.25 }}
+                            />
+                        </motion.svg>
+                        <motion.svg className="svgEle">
+                            <motion.path d={linkSvg2 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
+                                strokeLinecap="round"
+                                animate={{
+                                    d: linkSvg2 ?? undefined
+                                }}
+                                transition={{ duration: 0.25 }}
+                            />
+                        </motion.svg>
+                    </>)}
                 {/* <motion.div
             drag
                 className="node"
