@@ -11,6 +11,8 @@ type PropTypes = {
     side: string,
 }
 
+const DURATION = 0.5
+
 const btnOffsets: { [side: string]: { top: string, left: string }, } = {
     left: {
         top: "21px",
@@ -23,35 +25,42 @@ const btnOffsets: { [side: string]: { top: string, left: string }, } = {
 }
 
 const containerVar = {
-    init: (pos: any) => ({
-        x: pos.x - 30,
-        y: pos.y + 30,
+    init: ({pos, side}: any) => ({
+        x: pos.x + (side ==='left'?-32:32),
+        y: pos.y + 32,
     }),
-    showUnmaterialised: (pos: any) => ({
-        x: pos.x - 30,
-        y: pos.y + 30,
+    showUnmaterialised: ({pos, side}: any) => ({
+        x: pos.x + (side ==='left'?-32:32),
+        y: pos.y + 32,
     }),
-    showMaterialised: (pos: any) => ({
-        x: pos.x - 30 - 80,
-        y: pos.y + 30 + 120,
+    showMaterialised: ({pos, side}: any) => ({
+        x: pos.x + 90*(side==='left'?-1:1),
+        y: pos.y  + 90,
     }),
 }
 
 const nodeCircVar = {
-    init: { pathLength: 0 },
+    init: { 
+        opacity: 0,
+        scale: 0.3,
+        x: - 15,
+        y: - 15,
+    },
     showUnmaterialised: {
         x: - 15,
         y: - 15,
         scale: 1,
+        opacity: 0.8,
         pathLength: 1,
-        transition: { duration: 0.8 }
+        transition: { duration: DURATION }
     },
     showMaterialised: {
         x: - 15,
         y: - 15,
         scale: 2,
+        opacity: 1,
         pathLength: 1,
-        transition: { duration: 0.8 }
+        transition: { duration: DURATION }
     },
 }
 
@@ -74,12 +83,12 @@ const Node = (props: PropTypes) => {
     return (
         <motion.div
             variants={containerVar}
-            custom={{ x: props.x, y: props.y }}
+            custom={{pos: { x: props.x, y: props.y}, side: props.side}}
             initial="init"
             animate={materialised ? "showMaterialised" : "showUnmaterialised"}
             // initial={{ opacity: 0, scale: 0.5, x: props.x, y: props.y }}
             // animate={{ opacity: 1, scale: 1, x: props.x, y: props.y }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: DURATION }}
             style={{
                 position: "absolute", width: "min-content",
                 // top: props.x, left: props.y
@@ -129,7 +138,7 @@ const Node = (props: PropTypes) => {
                 <Node x={0} y={0} side="left" />
             }
             {materialised &&
-                <CreateNodeBtn side='right' />
+            <Node x={0} y={0} side="right" />
             }
             <div className="leftSlot" ref={leftRef}></div>
             <div className="rightSlot"></div>

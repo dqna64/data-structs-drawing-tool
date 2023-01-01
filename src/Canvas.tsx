@@ -116,6 +116,7 @@ export const Canvas = () => {
                             />
                         </motion.svg>
                         <Node2 x={nodeX1.get()} y={50} side='left' />
+                        <Node2 x={nodeX1.get()} y={50} side='right' />
                         <Node x={nodeX3.get()} y={180} />
                         {/* <motion.svg className="svgEle">
                             <motion.path d={linkSvg1 ?? undefined} stroke="#832ed9" strokeWidth="4" fill="none"
